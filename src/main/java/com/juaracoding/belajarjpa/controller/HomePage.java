@@ -2,6 +2,8 @@ package com.juaracoding.belajarjpa.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,9 +28,16 @@ public class HomePage {
 	ContactRepository contactRepo;
 	
 	@GetMapping("/")
-	public String viewIndex(Model model) {
+	public String viewIndex(Model model, HttpServletRequest request) {
+		
+		//ambil session
+		//check session ada?
+		
+		String sesi = (String) request.getSession().getAttribute("username");
+		
 		model.addAttribute("bookingmodel" , new BookingModel());
 		model.addAttribute("listActivities", this.contactRepo.findAll());
+		model.addAttribute("namanya", sesi);
 	
 		return "index.html";
 	}
@@ -65,7 +74,7 @@ public class HomePage {
 	
 	
 	@PostMapping("/contact/add")
-	public String addContact(@RequestParam("name")String name,@RequestParam("email")String email,@RequestParam("subject")String subject,
+	public String addContact(HttpServletRequest request,@RequestParam("nama") String name , @RequestParam("email")String email,@RequestParam("subject")String subject,
 							 @RequestParam("message")String message, @RequestParam("photo") MultipartFile file,Model model) {
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		ContactModel contactModel = new ContactModel(0,name,email,subject,message,fileName);
@@ -79,6 +88,10 @@ public class HomePage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
+		
+		request.getSession().setAttribute("username", name);
+		
+		
 		
 		return "redirect:/contact";
 	}
