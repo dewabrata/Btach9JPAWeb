@@ -97,7 +97,12 @@ public class HomePage {
 	}
 	
 	
+	@GetMapping("/login")
+	public String viewLogin(Model model, HttpServletRequest request) {
+		
 	
+		return "login.html";
+	}
 
 
 }
